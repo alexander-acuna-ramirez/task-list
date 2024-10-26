@@ -9,7 +9,7 @@ export default {
   name: 'OptionsComponent',
   components: {
 
-  }
+  },
   data() {
     return {
       message: "HelloWorld"
@@ -17,7 +17,7 @@ export default {
   },
 
   methods: {
-    function printSomething() {
+    printSomething() {
         console.log("Hello");
     }
   },

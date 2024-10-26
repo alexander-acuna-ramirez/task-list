@@ -9,6 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
+    "date-fns": "^4.1.0",
+    "gitart-vue-dialog": "^3.1.0",
+    "uuid": "^10.0.0",
     "vue": "^3.5.10"
   },
   "devDependencies": {

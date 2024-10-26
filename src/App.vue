@@ -1,11 +1,23 @@
 <script setup>
-import CompositionSetup from "./components/CompositionSetup.vue";
+import MainLayout from './components/layouts/MainLayout.vue';
+import TaskList from './components/TaskList.vue';
 </script>
 
 <template>
-  <div>
-    <CompositionSetup />
-  </div>
-</template>
+  <MainLayout>
+    <template #header>
+      <span>
+        Task App
+      </span>
+    </template>
+    <template #default>
+      <TaskList />
+    </template>
 
-<style scoped></style>
+    <template #footer>
+      <span>
+        &copy; 2024 Task App
+      </span>
+    </template>
+  </MainLayout>
+</template>
