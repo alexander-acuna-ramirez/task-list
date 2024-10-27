@@ -1,11 +1,12 @@
 <script setup>
-import { computed, reactive, provide } from "vue";
+import { computed, reactive, provide, ref } from "vue";
 import { tasksData } from "../data";
 import TaskCard from "./TaskCard.vue";
 import TaskAdd from "./TaskAdd.vue";
 import TaskFilters from "./TaskFilters.vue";
 
 const tasks = reactive(tasksData);
+const taskFilter = ref("all");
 const todayDate = computed(() => {
   return new Date().toLocaleDateString("en-US", {
     weekday: "long",
@@ -13,7 +14,6 @@ const todayDate = computed(() => {
     month: "long",
   });
 });
-
 const statusOptions = reactive([
   {
     label: "Open",
@@ -41,10 +41,28 @@ const statusOptions = reactive([
   },
 ]);
 
+const today = new Date().toISOString().split("T")[0];
+
+const filteredTasks = computed(() => {
+  return tasks.filter((task) => {
+    const isToday = task.date === today;
+    const hasStatus = taskFilter.value === 'all' || taskFilter.value === task.status;
+    return isToday && hasStatus;
+  });
+});
+
 provide("statusOptions", statusOptions);
+provide("tasks", tasks);
 
 function handleTaskAdded(task) {
   tasks.push(task);
+}
+
+function updateTaskStatus(taskId, newStatus){
+  const task = tasks.find(task => task.id === taskId);
+  if(task){
+    task.status = newStatus;
+  }
 }
 </script>
 
@@ -61,11 +79,11 @@ function handleTaskAdded(task) {
       <TaskAdd @created="handleTaskAdded" />
     </div>
 
-    <TaskFilters />
+    <TaskFilters v-model="taskFilter"/>
 
     <ul class="list-unstyled mt-2">
-      <li v-for="(item, index) in tasks" :key="index">
-        <TaskCard :task="item" />
+      <li v-for="(item, index) in filteredTasks" :key="index">
+        <TaskCard :task="item" @update-status="updateTaskStatus"/>
       </li>
     </ul>
   </section>

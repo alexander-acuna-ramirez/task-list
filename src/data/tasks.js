@@ -1,3 +1,7 @@
+import { v4 as uuidv4 } from 'uuid';
+const today = new Date().toISOString().split("T")[0];
+
+
 export const tasksData = [
   {
       id: "b1a8e9f5-1a4c-4a2e-8f47-3e1f8d7f9c8a",
@@ -98,5 +102,96 @@ export const tasksData = [
       category: "Health",
       description: "Comprehensive health check-up at the clinic.",
       status: "open"
+  },
+  /*-------------------------*/
+  {
+    id: uuidv4(),
+    title: "Client Follow-up",
+    startTime: "10:00",
+    endTime: "11:00",
+    date: today,
+    category: "Work",
+    description: "Call client to discuss ongoing project requirements.",
+    status: "open"
+  },
+  {
+    id: uuidv4(),
+    title: "Gym Workout",
+    startTime: "11:30",
+    endTime: "12:30",
+    date: today,
+    category: "Health",
+    description: "Strength training session at the gym.",
+    status: "open"
+  },
+  {
+    id: uuidv4(),
+    title: "Code Review",
+    startTime: "13:00",
+    endTime: "14:30",
+    date: today,
+    category: "Work",
+    description: "Review the team's latest code commits.",
+    status: "closed"
+  },
+  {
+    id: uuidv4(),
+    title: "Lunch with Friend",
+    startTime: "12:00",
+    endTime: "13:00",
+    date: today,
+    category: "Social",
+    description: "Meet with old friend at the local cafe.",
+    status: "open"
+  },
+  {
+    id: uuidv4(),
+    title: "Weekly Planning",
+    startTime: "15:00",
+    endTime: "16:00",
+    date: today,
+    category: "Work",
+    description: "Plan tasks and set priorities for the upcoming week.",
+    status: "open"
+  },
+  {
+    id: uuidv4(),
+    title: "Grocery Shopping",
+    startTime: "16:30",
+    endTime: "17:00",
+    date: today,
+    category: "Shopping",
+    description: "Pick up essential groceries for the week.",
+    status: "closed"
+  },
+  {
+    id: uuidv4(),
+    title: "Read Research Articles",
+    startTime: "17:30",
+    endTime: "18:30",
+    date: today,
+    category: "Education",
+    description: "Read up on recent articles in your field.",
+    status: "open"
+  },
+  {
+    id: uuidv4(),
+    title: "Dinner with Family",
+    startTime: "19:00",
+    endTime: "20:30",
+    date: today,
+    category: "Social",
+    description: "Dinner at home with the family.",
+    status: "open"
+  },
+  {
+    id: uuidv4(),
+    title: "Evening Run",
+    startTime: "20:45",
+    endTime: "21:30",
+    date: today,
+    category: "Health",
+    description: "Evening run around the neighborhood.",
+    status: "closed"
   }
 ];
