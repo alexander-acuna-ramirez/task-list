@@ -14,6 +14,6 @@ const router = createRouter({
 });
 
 router.beforeEach(authenticationGuard);
-router.beforeEach(adminGuard);
+//router.beforeEach(adminGuard);
 
 export { router };

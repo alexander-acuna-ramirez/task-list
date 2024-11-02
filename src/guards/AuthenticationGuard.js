@@ -1,9 +1,13 @@
-export const authenticationGuard = (to, from, next) => {
-  const isLogged = true;
+import { useAuthStore } from "../stores/authStore";
 
-  if (to.meta.requiresAuthentication && !isLogged) {
+
+export const authenticationGuard = (to, from, next) => {
+  const authStore = useAuthStore();
+
+  if (to.meta.mustBeAuthenticated && !authStore.isLogged) {
+
     next({
-      name: "UnauthorizedPage",
+      name: "LoginPage",
     });
   }
   next();

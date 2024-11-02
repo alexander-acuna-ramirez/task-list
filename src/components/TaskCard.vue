@@ -80,11 +80,14 @@ const props = defineProps({
 const emit = defineEmits(["update-status"]);
 
 function taskIcon(category){
+    return "";
     const categoryIcon = taskCategories.find((e) => e.name == category);
     return categoryIcon.icon;
 }
 
 function taskIconColor(category){
+
+    return "";
     const categoryIcon = taskCategories.find((e) => e.name == category);
     return categoryIcon.color;
 }

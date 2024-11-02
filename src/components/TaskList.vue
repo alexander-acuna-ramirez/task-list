@@ -1,11 +1,14 @@
 <script setup>
-import { computed, reactive, provide, ref } from "vue";
+import { computed, reactive, provide, ref, onMounted } from "vue";
 import { tasksData } from "../data";
 import TaskCard from "./TaskCard.vue";
 import TaskAdd from "./TaskAdd.vue";
 import TaskFilters from "./TaskFilters.vue";
+import { useAuthStore } from "@/stores/authStore";
+import { http } from "../plugins/axios";
 
-const tasks = reactive(tasksData);
+//const tasks = reactive(tasksData);
+const tasks = reactive([]);
 const taskFilter = ref("all");
 const todayDate = computed(() => {
   return new Date().toLocaleDateString("en-US", {
@@ -40,8 +43,16 @@ const statusOptions = reactive([
     }, 0),
   },
 ]);
-
+const authStore = useAuthStore();
 const today = new Date().toISOString().split("T")[0];
+
+const paginationState = reactive({
+  page: 1,
+  per_page: 10,
+  sot_by: "created_at",
+  sort_direction: "desc",
+  created_at: new Date().toISOString().substr(0, 10)
+})
 
 const filteredTasks = computed(() => {
   return tasks.filter((task) => {
@@ -64,6 +75,19 @@ function updateTaskStatus(taskId, newStatus){
     task.status = newStatus;
   }
 }
+
+async function loadTasks(){
+  const params = new URLSearchParams(paginationState).toString()
+  const response = await http.get(`api/v1/tasks?${params}`);
+  const data = response.data;
+  
+  tasks.push(...data.data);
+
+}
+
+onMounted(() => {
+  loadTasks();
+});
 </script>
 
 <template>
@@ -75,6 +99,8 @@ function updateTaskStatus(taskId, newStatus){
           {{ todayDate }}
         </small>
       </div>
+      <div>
+      </div>
 
       <TaskAdd @created="handleTaskAdded" />
     </div>
@@ -82,7 +108,7 @@ function updateTaskStatus(taskId, newStatus){
     <TaskFilters v-model="taskFilter"/>
 
     <ul class="list-unstyled mt-2">
-      <li v-for="(item, index) in filteredTasks" :key="index">
+      <li v-for="(item, index) in tasks" :key="index">
         <TaskCard :task="item" @update-status="updateTaskStatus"/>
       </li>
     </ul>
