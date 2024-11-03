@@ -1,15 +1,16 @@
 <script setup>
 import { computed, reactive, provide, ref, onMounted } from "vue";
-import { tasksData } from "../data";
+import { http } from "@/plugins/axios";
+import { watch } from "vue";
+
 import TaskCard from "./TaskCard.vue";
 import TaskAdd from "./TaskAdd.vue";
 import TaskFilters from "./TaskFilters.vue";
-import { useAuthStore } from "@/stores/authStore";
-import { http } from "../plugins/axios";
+import TaskPaginator from "./TaskPaginator.vue";
+import PageLoader from "./PageLoader.vue";
 
-//const tasks = reactive(tasksData);
 const tasks = reactive([]);
-const taskFilter = ref("all");
+const categories = reactive([]);
 const todayDate = computed(() => {
   return new Date().toLocaleDateString("en-US", {
     weekday: "long",
@@ -17,76 +18,61 @@ const todayDate = computed(() => {
     month: "long",
   });
 });
-const statusOptions = reactive([
-  {
-    label: "Open",
-    value: "open",
-    count: tasks.reduce((p, c) => {
-      if (p.status == "open") c += 1;
-      return c;
-    }, 0),
-  },
-  {
-    label: "Closed",
-    value: "closed",
-    count: tasks.reduce((p, c) => {
-      if (p.status == "closed") c += 1;
-      return c;
-    }, 0),
-  },
-  {
-    label: "Archived",
-    value: "archived",
-    count: tasks.reduce((p, c) => {
-      if (p.status == "archived") c += 1;
-      return c;
-    }, 0),
-  },
-]);
-const authStore = useAuthStore();
-const today = new Date().toISOString().split("T")[0];
-
+const statusOptions = reactive([]);
+const totalTasks = ref(0);
 const paginationState = reactive({
   page: 1,
   per_page: 10,
   sot_by: "created_at",
   sort_direction: "desc",
-  created_at: new Date().toISOString().substr(0, 10)
-})
-
-const filteredTasks = computed(() => {
-  return tasks.filter((task) => {
-    const isToday = task.date === today;
-    const hasStatus = taskFilter.value === 'all' || taskFilter.value === task.status;
-    return isToday && hasStatus;
-  });
+  created_at: new Date().toISOString().substr(0, 10),
+  status: "all",
 });
+const isLoading = ref(false);
 
 provide("statusOptions", statusOptions);
 provide("tasks", tasks);
 
-function handleTaskAdded(task) {
-  tasks.push(task);
-}
-
-function updateTaskStatus(taskId, newStatus){
-  const task = tasks.find(task => task.id === taskId);
-  if(task){
-    task.status = newStatus;
-  }
-}
-
-async function loadTasks(){
-  const params = new URLSearchParams(paginationState).toString()
+async function loadTasks() {
+  const params = new URLSearchParams(paginationState).toString();
   const response = await http.get(`api/v1/tasks?${params}`);
   const data = response.data;
-  
-  tasks.push(...data.data);
 
+  totalTasks.value = data.total;
+  tasks.splice(0, tasks.length);
+  tasks.push(...data.data);
 }
 
-onMounted(() => {
+async function taskCounts() {
+  const response = await http.get("api/v1/tasks/task/count");
+  statusOptions.splice(0, statusOptions.length);
+  statusOptions.push(...response.data.reverse());
+}
+
+async function loadCategories() {
+  const response = await http.get("api/v1/categories/combo/list");
+  categories.push(...response.data);
+}
+
+async function updateTaskStatus(taskId, newStatus) {
+  const response = await http.put(`api/v1/tasks/${taskId}/status`, { status: newStatus });
   loadTasks();
+  taskCounts();
+}
+
+watch(paginationState, () => loadTasks());
+
+onMounted(async () => {
+  isLoading.value = true;
+  try {
+    await loadTasks();
+    await taskCounts();
+    await loadCategories();
+  } catch (e) {
+    console.error(e);
+  } finally {
+    isLoading.value = false;
+  }
 });
 </script>
 
@@ -99,19 +85,30 @@ onMounted(() => {
           {{ todayDate }}
         </small>
       </div>
-      <div>
-      </div>
-
-      <TaskAdd @created="handleTaskAdded" />
+      <div></div>
+      <TaskAdd
+        @created="loadTasks"
+        :status="statusOptions"
+        :categories="categories"
+      />
     </div>
 
-    <TaskFilters v-model="taskFilter"/>
+    <PageLoader message="Loading Tasks..." v-if="isLoading" />
+    <div v-else>
+      <TaskFilters v-model="paginationState.status" />
 
-    <ul class="list-unstyled mt-2">
-      <li v-for="(item, index) in tasks" :key="index">
-        <TaskCard :task="item" @update-status="updateTaskStatus"/>
-      </li>
-    </ul>
+      <ul class="list-unstyled mt-2">
+        <li v-for="(item, index) in tasks" :key="index">
+          <TaskCard :task="item" @update-status="updateTaskStatus" />
+        </li>
+      </ul>
+
+      <TaskPaginator
+        :totalItems="totalTasks"
+        :itemsPerPage="paginationState.per_page"
+        v-model="paginationState.page"
+      />
+    </div>
   </section>
 </template>
 

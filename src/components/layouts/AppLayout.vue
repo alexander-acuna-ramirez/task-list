@@ -22,7 +22,7 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
+                <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <router-link to="/" class="nav-link text-white">Today</router-link>
                     </li>
@@ -31,6 +31,11 @@
                         <router-link to="/all-tasks" class="nav-link text-white">All Tasks</router-link>
                     </li>
                 </ul>
+
+                <div class="d-flex align-items-center">
+                  <span class="text-white me-3">{{ authStore.loggetUser }}</span>
+                  <button class="btn btn-outline-light btn-sm" @click="handleLogout">Logout</button>
+                </div>
             </div>
         </div>
     </nav>
@@ -45,6 +50,19 @@
     </footer>
   </div>
 </template>
+<script setup>
+import { useAuthStore } from '@/stores/authStore';
+import { useRouter } from "vue-router";
+
+const authStore = useAuthStore();
+const router = useRouter();
+
+function handleLogout(){
+  authStore.logout();
+  router.push({ name: "LoginPage"})
+}
+
+</script>
 
 <style scoped>
 main {

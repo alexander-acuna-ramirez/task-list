@@ -1,8 +1,9 @@
 import axios from "axios";
 import { useAuthStore } from "@/stores/authStore";
+import { router } from "@/router/index";
 
 const http = axios.create({
-  baseURL: "https://task-list-api.test/",
+  baseURL: import.meta.env.VITE_API_URL,
   headers: {
     Accepts: "application/json",
   },
@@ -11,7 +12,6 @@ const http = axios.create({
 http.interceptors.request.use(
   function (config) {
     const authStore = useAuthStore();
-    console.log(authStore.authState.token);
     config.headers.set("Authorization", "Bearer " + authStore.authState.token);
     return config;
   },
@@ -26,8 +26,10 @@ http.interceptors.response.use(
   },
   function (error) {
     const authStore = useAuthStore();
-    if(error.response.status == 401 && window.location != '/login'){
+    const currentRoute = router.currentRoute.value;
+    if(error.response.status == 401 && currentRoute.name != 'LoginName'){
         authStore.isLogged = false;
+        router.push({ name: "LoginPage" })
     }
     return Promise.reject(error);
   }
