@@ -62,14 +62,14 @@ const currentPage = computed({
 
 function goToPreviusPage(){
     if(props.modelValue > 1){
-        currentPage -= 1
+        currentPage.value -= 1
         //emit("update:modelValue", props.modelValue - 1)
     }
 }
 
 function goToNextPage(){
     if(props.modelValue < totalPages.value){
-        currentPage += 1
+        currentPage.value += 1
         //emit("update:modelValue", props.modelValue + 1)
     }
 }

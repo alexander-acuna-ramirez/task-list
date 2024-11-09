@@ -24,7 +24,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <router-link to="/" class="nav-link text-white">Today</router-link>
+                        <router-link to="/today-tasks" class="nav-link text-white">Today</router-link>
                     </li>
 
                     <li class="nav-item">

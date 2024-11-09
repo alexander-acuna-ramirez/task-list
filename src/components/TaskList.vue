@@ -25,7 +25,7 @@ const paginationState = reactive({
   per_page: 10,
   sot_by: "created_at",
   sort_direction: "desc",
-  created_at: new Date().toISOString().substr(0, 10),
+  date: new Date().toISOString().substr(0, 10),
   status: "all",
 });
 const isLoading = ref(false);
