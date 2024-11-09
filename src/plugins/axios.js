@@ -27,7 +27,7 @@ http.interceptors.response.use(
   function (error) {
     const authStore = useAuthStore();
     const currentRoute = router.currentRoute.value;
-    if(error.response.status == 401 && currentRoute.name != 'LoginName'){
+    if(error.response.status == 401 && currentRoute.name != 'LoginPage'){
         authStore.isLogged = false;
         router.push({ name: "LoginPage" })
     }

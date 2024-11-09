@@ -35,6 +35,7 @@
 <script setup>
 import { computed } from 'vue';
 
+const currentPage = defineModel({ required: true });
 
 const props = defineProps({
     totalItems: {
@@ -45,20 +46,24 @@ const props = defineProps({
         type: Number,
         required: true
     },
+    /*
     modelValue: {
         type: Number,
         required: true,
     }
+        */
 });
 
 
 const emit = defineEmits(["update:modelValue"]);
 const totalPages = computed(() => Math.ceil(props.totalItems / props.itemsPerPage))
+
+/*
 const currentPage = computed({
     get: () => props.modelValue,
     set: (value) => emit("update:modelValue", value)
 });
-
+*/
 
 function goToPreviusPage(){
     if(props.modelValue > 1){
